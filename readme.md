@@ -150,5 +150,27 @@ docker-compose up -d
 └── repositories
 ```
 
+# 9090端口占用
 
+lsof -ti:9090 | xargs kill -9
 
+# 查看端口是否占用
+
+lsof -i:9090
+
+# 初始化
+
+访问http://localhost:9090页面
+
+点击数据库认证，输入数据库名和数据库密码，参考./mongo-config/init-mongo.js里边的配置
+
+数据库地址：mongo
+
+用户名：（手动填的邮箱）
+密码：（ymfe.org）
+
+# 问题记录
+
+1. Error response from daemon: unable to find user $(id -u): no matching entries in passwd file
+
+解决：本地执行UID=$(id -u)，GID=$(id -g)，然后将值修改对应docker-compose.yml下的user: "${UID}:${GID}"

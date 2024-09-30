@@ -5,6 +5,8 @@ services:
   mongo:
     image: mongo:4
     restart: always
+    env_file:
+      - .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -20,19 +22,30 @@ services:
       interval: 2m
       timeout: 10s
       retries: 3
+    user: "${UID}:${GID}"
+    networks:
+      - yapinet
   yapi:
     build:
       context: ./
       dockerfile: Dockerfile
+    extra_hosts:
+      - "zzn.com:111.111.111.111"
     image: yapi
     # 第一次启动使用
     # command: "yapi server"
     # 之后使用下面的命令
     command: "node /my-yapi/vendors/server/app.js"
     volumes: 
-        - ./my-yapi:/my-yapi
+      - ./my-yapi:/my-yapi
     ports: 
       - 9090:9090
       - 3000:3000
     depends_on: 
       - mongo
+    networks:
+      - yapinet
+
+networks:
+  yapinet:
+    driver: bridge
